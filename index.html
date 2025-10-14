@@ -452,19 +452,25 @@
         }
 
         function calculateResult() {
-            const scores = Object.values(selected).sort((a, b) => b - a);
-            const highestScore = scores[0];
-            const secondHighestScore = scores[1];
+            // 1. 가장 높은 점수를 찾습니다.
+            const scores = Object.values(selected); // ex: [4, 2, 4, 0]
+            const highestScore = Math.max(...scores); // ex: 4
 
-            if (highestScore - secondHighestScore <= 1) {
-                return 'ALL';
+            // 2. 가장 높은 점수를 받은 유형이 몇 개인지 확인합니다.
+            const winners = [];
+            // selected 객체를 순회하며 점수가 highestScore와 같은 type을 winners 배열에 추가
+            for (const type in selected) {
+                if (selected[type] === highestScore) {
+                    winners.push(type); // ex: ['A', 'C']
+                }
             }
 
-            const resultType = Object.keys(selected).reduce((a, b) => {
-                return selected[a] > selected[b] ? a : b;
-            });
-            
-            return resultType;
+            // 3. 동점자(winner)가 2명 이상이면 'ALL', 아니면 유일한 우승자를 반환합니다.
+            if (winners.length > 1) {
+                return 'ALL'; // 동점일 경우 '장르 파괴자'
+            } else {
+                return winners[0]; // 단독 1위일 경우 해당 유형
+            }
         }
 
         function goResult() {
